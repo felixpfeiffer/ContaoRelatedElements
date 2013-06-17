@@ -38,11 +38,13 @@ class tl_related_elements extends tl_content
 
     public function createRelatedElements(DataContainer $dc)
     {
+
         // Return if there is no active record (override all)
         if (!$dc->activeRecord)
         {
             return;
         }
+
 
         $key = $dc->activeRecord->type;
         $intId = $dc->activeRecord->id;
@@ -50,7 +52,7 @@ class tl_related_elements extends tl_content
         $intSorting = $dc->activeRecord->sorting;
         $pTable = $dc->activeRecord->ptable;
 
-        if(array_key_exists($dc->activeRecord->type,$GLOBALS['TL_RELATED_ELEMENTS']))
+        if($GLOBALS['RELATED_ELEMENTS'] && is_array($GLOBALS['RELATED_ELEMENTS']) && array_key_exists($dc->activeRecord->type,$GLOBALS['RELATED_ELEMENTS']))
         {
 
             $arrSetBase = array(
@@ -64,6 +66,7 @@ class tl_related_elements extends tl_content
             $arrSets = $this->prepareSets($key);
 
             $objChilds = RelatedElementsModel::findChildsByMidAndTable($intId,$pTable);
+
 
             switch ($key)
             {
@@ -130,7 +133,7 @@ class tl_related_elements extends tl_content
                     break;
             }
         }
-        else if(!array_key_exists($dc->activeRecord->type,$GLOBALS['TL_RELATED_ELEMENTS']) && $dc->activeRecord->childs != '')
+        else if(!array_key_exists($dc->activeRecord->type,$GLOBALS['RELATED_ELEMENTS']) && $dc->activeRecord->childs != '')
         {
             $this->Database->prepare("DELETE FROM tl_content WHERE id!=? AND mid=? AND pid=? AND ptable=?")->execute($intId,$intId,$intPid,$pTable);
         }
@@ -148,7 +151,7 @@ class tl_related_elements extends tl_content
         $intId = $dc->activeRecord->id;
         $pTable = $dc->activeRecord->ptable;
 
-        if(array_key_exists($dc->activeRecord->type,$GLOBALS['TL_RELATED_ELEMENTS']))
+        if(array_key_exists($dc->activeRecord->type,$GLOBALS['RELATED_ELEMENTS']))
         {
             $objChilds = RelatedElementsModel::findChildsByMidAndTable($intId,$pTable);
 
@@ -176,7 +179,7 @@ class tl_related_elements extends tl_content
     protected function prepareSets($key)
     {
 
-        $arrChilds = $GLOBALS['TL_RELATED_ELEMENTS'][$key];
+        $arrChilds = $GLOBALS['RELATED_ELEMENTS'][$key];
 
         $arrPalettes = array();
 
